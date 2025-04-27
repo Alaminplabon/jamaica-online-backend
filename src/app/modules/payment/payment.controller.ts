@@ -17,7 +17,6 @@ const initPayment = catchAsync(async (req: Request, res: Response) => {
 });
 
 const validatePayment = catchAsync(async (req: Request, res: Response) => {
-  
   const result = await PaymentService.validatePayment(req?.query);
 
   sendResponse(res, {
