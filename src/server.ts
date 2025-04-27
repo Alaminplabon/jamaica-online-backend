@@ -1,10 +1,11 @@
 import { Server } from "http";
 import app from "./app";
 import config from "./config";
+import chalk from 'chalk';
 
 async function main() {
   const server: Server = app.listen(config.port, () => {
-    console.log("App is listening on port " + config.port);
+    console.log(chalk.green("App is listening on port " + config.port));
   });
 
   const exitHandler = () => {
@@ -26,5 +27,4 @@ async function main() {
     exitHandler();
   });
 }
-
 main();
