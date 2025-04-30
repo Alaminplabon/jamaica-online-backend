@@ -5,7 +5,6 @@ import httpStatus from "http-status";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import cookieParser from "cookie-parser";
 import corn from "node-cron";
-import { AppointmentService } from "./app/modules/Appointment/appointment.service";
 
 const app: Application = express();
 // app.use(cors({ origin: "http://localhost:3000", credentials: true }));
@@ -21,16 +20,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('server is running');
+  res.send('server is on');
 });
 
-corn.schedule("* * * * *", () => {
-  try {
-    AppointmentService.cancelUnpaidAppointments();
-  } catch (error) {
-    console.error(error);
-  }
-});
+// corn.schedule("* * * * *", () => {
+//   try {
+//     AppointmentService.cancelUnpaidAppointments();
+//   } catch (error) {
+//     console.error(error);
+//   }
+// });
 
 //* middlewares
 app.use("/api/v1", router);
