@@ -17,22 +17,12 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const createDoctor = catchAsync(async (req: Request, res: Response) => {
-  const result = await userService.createDoctor(req);
+const createUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await userService.createUser(req);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Doctor Created successfully!",
-    data: result,
-  });
-});
-
-const createPatient = catchAsync(async (req: Request, res: Response) => {
-  const result = await userService.createPatient(req);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Patient Created successfully!",
+    message: "User Created successfully!",
     data: result,
   });
 });
@@ -92,8 +82,7 @@ const updateMyProfile = catchAsync(async (req: Request & {user?: IAuthUser}, res
 
 export const userController = {
   createAdmin,
-  createDoctor,
-  createPatient,
+  createUser,
   getAllFromDB,
   changeProfileStatus,
   getMyProfile,

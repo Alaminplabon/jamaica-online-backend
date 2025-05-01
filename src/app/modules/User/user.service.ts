@@ -1,8 +1,7 @@
 import {
   Admin,
-  Doctor,
-  Patient,
   Prisma,
+  User,
   UserRole,
   UserStatus,
 } from "@prisma/client";
@@ -46,20 +45,20 @@ const createAdmin = async (req: Request): Promise<Admin> => {
   return result;
 };
 
-const createDoctor = async (req: Request): Promise<Doctor> => {
+const createUser = async (req: Request): Promise<User> => {
   const file = req.file as IFile;
 
   if (file) {
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
-    req.body.doctor.profilePhoto = uploadToCloudinary?.secure_url;
+    req.body.user.profilePhoto = uploadToCloudinary?.secure_url;
   }
 
   const hashedPassword: string = await bcrypt.hash(req.body.password, 12);
 
   const userData = {
-    email: req.body.doctor.email,
+    email: req.body.user.email,
     password: hashedPassword,
-    role: UserRole.DOCTOR,
+    role: UserRole.User,
   };
 
   const result = await prisma.$transaction(async (transactionClient) => {
@@ -67,42 +66,11 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
       data: userData,
     });
 
-    const createdDoctorData = await transactionClient.doctor.create({
-      data: req.body.doctor,
+    const createdUserData = await transactionClient.user.create({
+      data: req.body.user,
     });
 
-    return createdDoctorData;
-  });
-
-  return result;
-};
-
-const createPatient = async (req: Request): Promise<Patient> => {
-  const file = req.file as IFile;
-
-  if (file) {
-    const uploadedProfileImage = await fileUploader.uploadToCloudinary(file);
-    req.body.patient.profilePhoto = uploadedProfileImage?.secure_url;
-  }
-
-  const hashedPassword: string = await bcrypt.hash(req.body.password, 12);
-
-  const userData = {
-    email: req.body.patient.email,
-    password: hashedPassword,
-    role: UserRole.PATIENT,
-  };
-
-  const result = await prisma.$transaction(async (transactionClient) => {
-    await transactionClient.user.create({
-      data: userData,
-    });
-
-    const createdPatientData = await transactionClient.patient.create({
-      data: req.body.patient,
-    });
-
-    return createdPatientData;
+    return createdUserData;
   });
 
   return result;
@@ -225,7 +193,7 @@ const getMyProfile = async (user: IAuthUser) => {
         email: userInfo.email,
       },
     });
-  } else if (userInfo.role === UserRole.DOCTOR) {
+  } else if (userInfo.role === UserRole.User) {
     profileInfo = await prisma.doctor.findUnique({
       where: {
         email: userInfo.email,
@@ -274,7 +242,7 @@ const updateMyProfile = async(user: IAuthUser, req: Request) => {
             data: req.body
         })
     }
-    else if (userInfo.role === UserRole.DOCTOR) {
+    else if (userInfo.role === UserRole.User) {
         profileInfo = await prisma.doctor.update({
             where: {
                 email: userInfo.email
@@ -296,8 +264,7 @@ const updateMyProfile = async(user: IAuthUser, req: Request) => {
 
 export const userService = {
   createAdmin,
-  createDoctor,
-  createPatient,
+  createUser,
   getAllFromDB,
   changeProfileStatus,
   getMyProfile,
